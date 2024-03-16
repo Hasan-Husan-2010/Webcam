@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="HasanPro" />
+    <meta name="description" content="Frontend Developer">
+    <meta name="keywords" content="Webcam,camera,Frontend webcam, webcam in Frontend">
+    <title>Webcam</title>
+    <link rel="icon" href="cam.jpg">
+    <style type="text/css">
+    * {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    }
+    span, a, label {
+        display: inline-block;
+    }
+    body {
+        margin: 0;
+        padding: 10px;
+    }
+body::-webkit-scrollbar {
+  width: 10px;
+}
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px red;
+  border-radius: 30px;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: red;
+  border-radius: 30px;
+}
+    #btn-start,#copy {
+        padding: 7px 15px;
+        border: 2px solid black;
+        background-color: transparent;
+        margin: auto;
+    }
+    #snapshot {
+        padding: 7px 15px;
+        border: 2px solid black;
+        background-color: transparent;
+        margin: 10px auto;
+    }
+    #dataurl {
+        width: 70%;
+        height: 100px;
+        margin: 10px auto;
+        outline: none;
+        border: 2px solid black;
+        padding: 0;
+        display: inline-block;
+    }
+#dataurl::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+#dataurl::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px red;
+  border-radius: 30px;
+}
+#dataurl::-webkit-scrollbar-thumb {
+  background-color: red;
+  border-radius: 30px;
+}
+.box {
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+}
+#canvas,#video {
+    width: 500px;
+    height: 400px;
+    margin: auto;
+}
+@media(max-width:591px) {
+    .df {
+        width: 100%;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+    }
+}
+@media(max-width:419px) {
+    #dataurl {
+        width: 50%;
+        height: 50px;
+    }
+    #canvas,#video {
+    width: 100%;
+    height: 290px;
+}
+#btn-start,#copy,#snapshot {
+    font-size: 10px;
+}
+}
+@media(max-width:300px) {
+    #dataurl {
+        width: 50%;
+        height: 50px;
+    }
+    #canvas,#video {
+    width: 100%;
+    height: 190px;
+}
+}
+    </style>
+</head>
+<body>
+    <div class="box">
+    <button id="btn-start">Start camera</button>
+    <video id="video" autoplay></video>
+    <button  id="snapshot">Take snapshot</button>
+    <div id="dataurl-container">
+    <canvas id="canvas"></canvas>
+    <div id="dataurl-header"></div>
+    <textarea id="dataurl"></textarea>
+    <button onclick="myFunction()" id="copy">Copy the text</button>
+    </div>
+    </div>
+    <script>
+    let btn_start = document.querySelector("#btn-start");
+    let video = document.querySelector("#video");
+    let btn_snap = document.querySelector("#snapshot");
+    let canvas = document.querySelector("#canvas");
+    let dataurl = document.querySelector("#dataurl");
+    let dataurl_container = document.querySelector("#dataurl-container");
+    let copy = document.querySelector("#copy");
+    btn_start.addEventListener('click', async function(){
+        let stream = null;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false})
+        }catch(error) {
+            alert(error.messege);
+            return;
+        }
+        video.srcObject = stream;
+
+        video.style.display = 'block';
+        btn_start.style.display = 'none';
+        btn_snap.style.display = 'block';
+    });
+    btn_snap.style.display = 'none';
+    video.style.display = 'none';
+    copy.style.display = 'none';
+    dataurl.style.display = 'none';
+    dataurl_container.style.display = 'none';
+    btn_snap.addEventListener('click', function(){
+        canvas.getContext('2d').drawImage(video,0,0,canvas.width + 15, canvas.height);
+        let image_data_url = canvas.toDataURL('image/jpeg')
+        dataurl.value = image_data_url;
+        dataurl_container.style.display = 'block';
+        dataurl.style.display = 'block';
+        copy.style.display = 'block';
+    });
+    function myFunction() {
+    dataurl.setSelectionRange(0, 99999); 
+    navigator.clipboard.writeText(dataurl.value);
+
+    alert("Copied the text: " + dataurl.value);
+}
+    </script>
+</body>
+</html>
